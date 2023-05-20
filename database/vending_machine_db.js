@@ -16,6 +16,11 @@ async function getMachines() {
 }
 
 
+/**
+ * Get a specific vending machine by id
+ * @param {number} id
+ * @returns {Promise<{id: number, name: string}>}
+ */
 async function getMachine(id) {
     const sql = 'SELECT * FROM vending_machines WHERE id = ?';
 
@@ -30,6 +35,11 @@ async function getMachine(id) {
 }
 
 
+/**
+ * Get all slots from a vending machine and all the information regarding the product in that slot.
+ * @param machine_id
+ * @returns {Promise<{vending_machine_id: number, slot_number: number, product_id: number, product_name: string, product_price: number, quantity: number}>}
+ */
 async function getSlots(machine_id) {
     const sql = `
         SELECT * FROM vw_slot_products
@@ -47,6 +57,13 @@ async function getSlots(machine_id) {
 }
 
 
+/**
+ * Get a specific slot from a vending machine and all the information regarding the product in that slot.
+ *
+ * @param {number} machine_id
+ * @param {number} slot_number
+ * @returns {Promise<{vending_machine_id: number, slot_number: number, product_id: number, product_name: string, product_price: number, quantity: number}>}
+ */
 async function getSlot(machine_id, slot_number) {
     const sql = `
         SELECT * FROM vw_slot_products

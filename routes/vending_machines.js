@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const vending_machine_db = require('../database/vending_machine_db');
-const {verbose} = require("sqlite3");
+const transaction_db = require('../database/transaction_db');
 const {dispense_product} = require("../vending_machine/connection")
 
 
@@ -65,19 +65,47 @@ router.get('/:id/purchase/:slot_number', (req, res) => {
     const machine_id = req.params.id;
     const slot_number = req.params.slot_number;
 
-    const user = req.user;
+    /**
+     * @type {{id: number, username: string, credit: number}}
+     */
+    const user = req.session.user;
+
+    // Check if user is logged in
+    if (!user) {
+        res.json({
+            status: "error",
+            message: "Not logged in"
+        });
+        return;
+    }
 
     vending_machine_db.getSlot(machine_id, slot_number).then((slot) => {
 
         if (slot) {
-            if (slot.product_quantity > 0) {
-                console.log(slot.product_quantity)
-                vending_machine_db.createProductTransaction(user_id, slot.product_id).then((transaction) => {
+            if (slot.quantity > 0) {
+                console.log(slot.quantity)
+                vending_machine_db.createProductTransaction(user.id, slot.product_id).then((transaction_id) => {
 
                     // Wait for machine to dispense the product
-                    dispense_product(slot.slot_id).then((response) => {
-                        // TODO: Update transaction status and update product quantity
+                    dispense_product(slot.slot_number).then((response) => {
+
+                        // TODO: Maybe validate response from machine?
+
+                        // Update product quantity
                         vending_machine_db.purchaseProduct(machine_id, slot_number).then(() => {
+
+                            // Set transaction as processed
+                            transaction_db.setTransactionProcessed(transaction_id).then(() => {
+                                res.json({
+                                    status: "success",
+                                    message: "Product dispensed"
+                                });
+                            }).catch((err) => {
+                                res.json({
+                                    status: "error",
+                                    message: err.message,
+                                });
+                            });
 
                         }).catch((err) => {
                             res.json({
@@ -100,17 +128,6 @@ router.get('/:id/purchase/:slot_number', (req, res) => {
                     });
                 });
 
-                vending_machine_db.purchaseProduct(machine_id, slot_number).then(() => {
-                    res.json({
-                        status: "success",
-                        message: "Product purchased successfully"
-                    });
-                }).catch((err) => {
-                    res.json({
-                        status: "error",
-                        message: err.message,
-                    });
-                });
             } else {
                 res.json({
                     status: "error",
