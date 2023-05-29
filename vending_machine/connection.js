@@ -1,5 +1,5 @@
 
-MACHINE_IP_ADDRESS = "127.0.0.1"; // TODO: CHANGE ME
+MACHINE_IP_ADDRESS = "192.168.1.179"; // TODO: CHANGE ME
 
 async function dispense_product(slot_id) {
 
@@ -9,9 +9,10 @@ async function dispense_product(slot_id) {
             res.json().then(data => {
                 let return_value = data.return_value;
 
-                if (return_value === 0) {
+                if (return_value === 2 || return_value === 0) {
                     resolve(data);
-                } else if (return_value === 1) {
+
+                } else if (return_value === 2) {
                     reject({message: "No product dispensed"});
                 }
 
@@ -24,6 +25,24 @@ async function dispense_product(slot_id) {
     });
 }
 
+
+async function get_temperature() {
+    return new Promise((resolve, reject) => {
+        fetch(`http://${MACHINE_IP_ADDRESS}/temperature`)
+            .then(res => {
+                res.json()
+                    .then(data => {
+                        let return_value = data.return_value;
+
+                        resolve(return_value);
+                    })
+                    .catch(error => reject(error));
+            })
+            .catch(error => reject(error));
+    });
+}
+
 module.exports = {
     dispense_product: dispense_product,
+    get_temperature: get_temperature,
 }

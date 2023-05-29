@@ -62,7 +62,7 @@ async function getSlots(machine_id) {
  *
  * @param {number} machine_id
  * @param {number} slot_number
- * @returns {Promise<{vending_machine_id: number, slot_number: number, product_id: number, product_name: string, product_price: number, quantity: number}>}
+ * @returns {Promise<{vending_machine_id: number, slot_number: number, product_id: number, product_name: string, product_price: number, product_quantity: number}>}
  */
 async function getSlot(machine_id, slot_number) {
     const sql = `
@@ -96,7 +96,7 @@ async function createProductTransaction(user_id, product_id) {
     });
 }
 
-async function purchaseProduct(machine_id, slot_number) {
+async function decrementStock(machine_id, slot_number) {
     const sql = `
         UPDATE vending_machine_slots
         SET quantity = quantity - 1
@@ -113,11 +113,30 @@ async function purchaseProduct(machine_id, slot_number) {
     });
 }
 
+async function update_temperature(machine_id, temperature) {
+    const sql = `
+        UPDATE vending_machines
+        SET temperature = ?
+        WHERE id = ?
+    `;
+
+    return new Promise((resolve, reject) => {
+        db.run(sql, [temperature, machine_id], (err) => {
+            if (err)
+                reject(err);
+            resolve(this.changes);
+        })
+    })
+}
+
+
+
 module.exports = {
     getMachines: getMachines,
     getMachine: getMachine,
     getSlots: getSlots,
     getSlot: getSlot,
     createProductTransaction: createProductTransaction,
-    purchaseProduct: purchaseProduct
+    decrementStock: decrementStock,
+    update_temperature: update_temperature,
 }

@@ -1,29 +1,68 @@
 var express = require('express');
 var router = express.Router();
 
-const users_db = require('../database/user_db');
+const user_db = require('../database/user_db');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-    if (req.session.user) {
-        return res.send(req.session.user);
-    } else {
-        return res.send("Not logged in");
-    }
+    let username = req.query.username;
+
+    user_db.getUser(username)
+        .then(user => {
+            console.log(user)
+            if (user) {
+                res.json({
+                    status: "success",
+                    data: user,
+                })
+            } else {
+                console.error("User not found: ", username);
+                res.json({
+                    status: "error",
+                    message: "User not found: " + username
+                })
+            }
+        })
 });
 
 
 router.post('/login', (req, res) => {
     const username = req.body.username;
 
-    users_db.getUser(username).then((user) => {
-        req.session.user = user;
-        res.send(user);
+    user_db.getUser(username)
+        .then(user => {
+            if (!user) {
+                res.json({
+                    status: "error",
+                    message: "User not found",
+                })
+            } else {
+                res.json({
+                    status: "sucess",
+                    data: user
+                })
+            }
 
-    }).catch((err) => {
-        res.send(err);
-    });
+        })
+        .catch(err => {
+            console.error(err);
+        })
 });
+
+router.get('/history', (req, res) => {
+    const username = req.query.username;
+
+    user_db.getHistory(username)
+        .then(rows => {
+            res.json({
+                status: "success",
+                data: rows
+            })
+        })
+        .catch(err => {
+            console.error(err);
+        });
+})
 
 
 module.exports = router;
