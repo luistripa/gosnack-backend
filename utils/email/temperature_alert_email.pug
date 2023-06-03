@@ -1,0 +1,73 @@
+html
+    head
+        style.
+            .header {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                width: 100%;
+                height: 15%;
+
+                font-size: 5vh;
+
+                background-color: darkred;
+                font-family: Arial, sans-serif;
+            }
+
+            .header .title {
+                color: white;
+            }
+
+            .info_container {
+                display: flex;
+                justify-content: center;
+
+                width: 100%;
+                height: 80%;
+
+                margin-top: 5%;
+            }
+
+            .info_table {
+                width: 50%;
+                height: 50%;
+
+                border: gray 1px solid;
+            }
+
+            .info_table .head {
+                font-weight: bold;
+                text-align: center;
+            }
+
+            .info_table .cell {
+                border: gray 1px solid;
+                text-align: center;
+            }
+
+            .info_table .red_text {
+                color: red;
+            }
+
+    body
+        div.header
+            p.title Temperature warning!
+
+        div.info_container
+            table.info_table
+                thead
+                    td.cell.head Key
+                    td.cell.head Value
+                tr
+                    td.cell Machine ID
+                    td.cell #{machine ? machine.id : "0"}
+                tr
+                    td.cell Machine Name
+                    td.cell #{machine ? machine.name : "Test name"}
+                tr
+                    td.cell Registered Temperature
+                    td.cell.red_text #{temperature ? temperature : "0"} <span>&#176;</span>C
+                tr
+                    td.cell Time
+                    td.cell #{time ? time : "00:00:00"}

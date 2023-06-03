@@ -9,9 +9,14 @@ DROP VIEW IF EXISTS vw_slot_products;
 DROP VIEW IF EXISTS vw_low_stock_products;
 
 
+--
+-- Tables
+--
+
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT ,
     username TEXT NOT NULL ,
+    email TEXT NOT NULL ,
     credit INTEGER NOT NULL DEFAULT 0
 );
 
@@ -30,7 +35,12 @@ CREATE TABLE IF NOT EXISTS transactions (
 CREATE TABLE IF NOT EXISTS vending_machines (
     id INTEGER PRIMARY KEY AUTOINCREMENT ,
     name TEXT NOT NULL,
-    temperature REAL NOT NULL DEFAULT 0
+    temperature REAL NOT NULL DEFAULT 0 ,
+    admin_id INTEGER NOT NULL ,
+    last_heartbeat TEXT NOT NULL DEFAULT '0', -- Contains the date of the last temperature update
+    last_alert_time TEXT NOT NULL DEFAULT '0' ,
+
+    FOREIGN KEY (admin_id) REFERENCES users(id)
 );
 
 
@@ -53,6 +63,10 @@ CREATE TABLE IF NOT EXISTS products (
     price REAL NOT NULL DEFAULT 0
 );
 
+
+--
+-- VIEWS
+--
 
 -- View that joins products and machine slots
 CREATE VIEW IF NOT EXISTS vw_slot_products AS
@@ -78,22 +92,26 @@ CREATE VIEW IF NOT EXISTS vw_low_stock_products AS
     WHERE vms.quantity <= 2;
 
 
+--
+-- Inserts
+--
+
 -- Create users
-INSERT INTO users VALUES (0, 'admin', 100);
-INSERT INTO users VALUES (1, 'user', 100);
+INSERT INTO users(username, email, credit) VALUES ('admin', 'scmu_repairs@icloud.com', 100);
+INSERT INTO users(username, email, credit) VALUES ('user', 'user@gosnack.com', 100);
 
 -- Create machine
-INSERT INTO vending_machines VALUES (0, 0, 'Máquina Fixe');
+INSERT INTO vending_machines(name, admin_id) VALUES ('Máquina Fixe', 1);
 
 -- Create products
-INSERT INTO products VALUES (0, 'KitKat', 'assets/images/KitKat.png', 1.0);
-INSERT INTO products VALUES (1, 'Twix', 'assets/images/Twix.png', 1.0);
+INSERT INTO products(name, image, price) VALUES ('KitKat', 'assets/images/KitKat.png', 1.0);
+INSERT INTO products(name, image, price) VALUES ('Twix', 'assets/images/Twix.png', 1.0);
 
 -- Add products to machine
-INSERT INTO vending_machine_slots VALUES (0, 1, 0, 3);
-INSERT INTO vending_machine_slots VALUES (0, 2, 1, 3);
+INSERT INTO vending_machine_slots(vending_machine_id, slot_number, product_id, quantity) VALUES (1, 1, 1, 3);
+INSERT INTO vending_machine_slots(vending_machine_id, slot_number, product_id, quantity) VALUES (1, 2, 2, 3);
 
 -- Create transactions
-INSERT INTO transactions VALUES (0, 1, 0, 1.0);
-INSERT INTO transactions VALUES (1, 1, 0, 1.0);
-INSERT INTO transactions VALUES (2, 1, 0, 1.0);
+INSERT INTO transactions(user_id, product_id, price_paid) VALUES (2, 2, 1.0);
+INSERT INTO transactions(user_id, product_id, price_paid) VALUES (2, 1, 1.0);
+INSERT INTO transactions(user_id, product_id, price_paid) VALUES (2, 1, 1.0);

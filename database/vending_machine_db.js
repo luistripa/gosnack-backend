@@ -19,7 +19,7 @@ async function getMachines() {
 /**
  * Get a specific vending machine by id
  * @param {number} id
- * @returns {Promise<{id: number, name: string}>}
+ * @returns {Promise<{id: number, name: string, temperature: number, admin_id: number, last_heartbeat: string, last_alert_time: string}>}
  */
 async function getMachine(id) {
     const sql = 'SELECT * FROM vending_machines WHERE id = ?';
@@ -113,7 +113,7 @@ async function decrementStock(machine_id, slot_number) {
     });
 }
 
-async function update_temperature(machine_id, temperature) {
+async function updateTemperature(machine_id, temperature) {
     const sql = `
         UPDATE vending_machines
         SET temperature = ?
@@ -130,6 +130,32 @@ async function update_temperature(machine_id, temperature) {
 }
 
 
+async function updateHeartBeat(machine_id) {
+
+    const sql = "UPDATE vending_machines SET last_heartbeat = ? WHERE id = ?;"
+
+    return new Promise((resolve, reject) => {
+        db.run(sql, [new Date().toString(), machine_id], err => {
+            if (err)
+                reject(err);
+            resolve();
+        })
+    })
+}
+
+
+async function updateLastAlertTime(machine_id) {
+    const sql = "UPDATE vending_machines SET last_alert_time = ? WHERE id = ?";
+
+    return new Promise((resolve, reject) => {
+        db.run(sql, [new Date().toString(), machine_id], err => {
+            if (err)
+                reject(err);
+            resolve();
+        })
+    })
+}
+
 
 module.exports = {
     getMachines: getMachines,
@@ -138,5 +164,7 @@ module.exports = {
     getSlot: getSlot,
     createProductTransaction: createProductTransaction,
     decrementStock: decrementStock,
-    update_temperature: update_temperature,
+    updateTemperature: updateTemperature,
+    updateHeartBeat: updateHeartBeat,
+    updateLastAlertTime: updateLastAlertTime,
 }

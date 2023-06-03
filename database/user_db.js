@@ -20,6 +20,18 @@ async function getUser(username) {
     });
 }
 
+async function getUserById(user_id) {
+    const sql = "SELECT * FROM users WHERE id = ?";
+    return new Promise((resolve, reject) => {
+        db.get(sql, [user_id], (err, user) => {
+            if (err) {
+                reject(err);
+            }
+            resolve(user);
+        });
+    });
+}
+
 async function getHistory(username) {
     const sql = "SELECT * FROM vw_user_recent_transactions WHERE username=?";
 
@@ -65,6 +77,7 @@ async function updateCredit(username, delta_credit) {
 
 module.exports = {
     getUser: getUser,
+    getUserById: getUserById,
     getHistory: getHistory,
     addTransaction: addTransaction,
     updateCredit: updateCredit,

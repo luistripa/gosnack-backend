@@ -1,5 +1,5 @@
 
-MACHINE_IP_ADDRESS = "192.168.1.179"; // TODO: CHANGE ME
+MACHINE_IP_ADDRESS = "127.0.0.1"; // TODO: CHANGE ME
 
 async function dispense_product(slot_id) {
 
@@ -22,6 +22,12 @@ async function dispense_product(slot_id) {
         }).catch((err) => {
             reject(err);
         })
+
+        resolve(
+            {
+                return_value: 0
+            }
+        )
     });
 }
 
