@@ -4,8 +4,6 @@
 fetch('/api/vending_machines')
     .then((res) => res.json())
     .then((data) => {
-        console.log(data);
-
         const machine_list = document.getElementById('machine_list');
 
         let html = '';
@@ -18,4 +16,4 @@ fetch('/api/vending_machines')
         });
         machine_list.innerHTML = html;
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.err(err));

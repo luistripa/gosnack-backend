@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT ,
     username TEXT NOT NULL ,
     email TEXT NOT NULL ,
-    credit INTEGER NOT NULL DEFAULT 0
+    credit REAL NOT NULL DEFAULT 0
 );
 
 
@@ -101,15 +101,25 @@ INSERT INTO users(username, email, credit) VALUES ('admin', 'scmu_repairs@icloud
 INSERT INTO users(username, email, credit) VALUES ('user', 'user@gosnack.com', 100);
 
 -- Create machine
-INSERT INTO vending_machines(name, admin_id) VALUES ('Máquina Fixe', 1);
+INSERT INTO vending_machines(name, admin_id) VALUES ('Máquina 1', 1);
+INSERT INTO vending_machines(name, admin_id, temperature) VALUES ('Máquina 2', 1, 24.2);
 
 -- Create products
 INSERT INTO products(name, image, price) VALUES ('KitKat', 'assets/images/KitKat.png', 1.0);
+INSERT INTO products(name, image, price) VALUES ('Belgas', 'assets/images/Belgas.png', 1.0);
 INSERT INTO products(name, image, price) VALUES ('Twix', 'assets/images/Twix.png', 1.0);
+INSERT INTO products(name, image, price) VALUES ('Mars', 'assets/images/Mars.png', 1.0);
+INSERT INTO products(name, image, price) VALUES ('Lays', 'assets/images/Lays.png', 1.2);
+
 
 -- Add products to machine
 INSERT INTO vending_machine_slots(vending_machine_id, slot_number, product_id, quantity) VALUES (1, 1, 1, 3);
 INSERT INTO vending_machine_slots(vending_machine_id, slot_number, product_id, quantity) VALUES (1, 2, 2, 3);
+
+INSERT INTO vending_machine_slots(vending_machine_id, slot_number, product_id, quantity) VALUES (2, 1, 1, 3);
+INSERT INTO vending_machine_slots(vending_machine_id, slot_number, product_id, quantity) VALUES (2, 2, 3, 2);
+INSERT INTO vending_machine_slots(vending_machine_id, slot_number, product_id, quantity) VALUES (2, 3, 4, 0);
+INSERT INTO vending_machine_slots(vending_machine_id, slot_number, product_id, quantity) VALUES (2, 4, 5, 0);
 
 -- Create transactions
 INSERT INTO transactions(user_id, product_id, price_paid) VALUES (2, 2, 1.0);

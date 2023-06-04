@@ -22,33 +22,9 @@ async function dispense_product(slot_id) {
         }).catch((err) => {
             reject(err);
         })
-
-        resolve(
-            {
-                return_value: 0
-            }
-        )
-    });
-}
-
-
-async function get_temperature() {
-    return new Promise((resolve, reject) => {
-        fetch(`http://${MACHINE_IP_ADDRESS}/temperature`)
-            .then(res => {
-                res.json()
-                    .then(data => {
-                        let return_value = data.return_value;
-
-                        resolve(return_value);
-                    })
-                    .catch(error => reject(error));
-            })
-            .catch(error => reject(error));
     });
 }
 
 module.exports = {
     dispense_product: dispense_product,
-    get_temperature: get_temperature,
 }

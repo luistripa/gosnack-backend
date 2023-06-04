@@ -80,22 +80,6 @@ async function getSlot(machine_id, slot_number) {
     });
 }
 
-async function createProductTransaction(user_id, product_id) {
-    const sql = `
-        INSERT INTO transactions (user_id, product_id)
-        VALUES (?, ?)
-    `;
-
-    return new Promise((resolve, reject) => {
-        db.run(sql, [user_id, product_id], (err) => {
-            if (err) {
-                reject(err);
-            }
-            resolve(this.lastID);
-        });
-    });
-}
-
 async function decrementStock(machine_id, slot_number) {
     const sql = `
         UPDATE vending_machine_slots
@@ -162,7 +146,6 @@ module.exports = {
     getMachine: getMachine,
     getSlots: getSlots,
     getSlot: getSlot,
-    createProductTransaction: createProductTransaction,
     decrementStock: decrementStock,
     updateTemperature: updateTemperature,
     updateHeartBeat: updateHeartBeat,

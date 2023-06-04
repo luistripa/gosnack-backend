@@ -8,6 +8,20 @@ const {dispense_product} = require("../vending_machine/connection")
 const {sendTemperatureWarningEmail} = require("../utils/email/email");
 
 
+router.get('/', (req, res) => {
+    machine_db.getMachines()
+        .then(machines => {
+            res.json(
+                {
+                    status: "success",
+                    data: machines
+                }
+            );
+        })
+        .catch(err => console.error(err));
+});
+
+
 /*
     GET /api/vending_machines/:id
     Return a single vending machine with all of its slots
@@ -19,6 +33,40 @@ router.get('/:machine_id', (req, res) => {
         .then(machine => {
             res.json(
                 machine
+            );
+        })
+        .catch(err => console.error(err));
+});
+
+
+router.get('/:machine_id/slot/:slot_id/', (req, res) => {
+    const machine_id = req.params.machine_id;
+    const slot_id = req.params.slot_id;
+
+    machine_db.getSlot(machine_id, slot_id)
+        .then(slot => {
+            res.json(
+                {
+                    status: "success",
+                    data: slot
+                }
+            );
+        })
+        .catch(err => console.error(err));
+});
+
+
+router.get('/:machine_id/slots', (req, res) => {
+
+    const machine_id = req.params.machine_id;
+
+    machine_db.getSlots(machine_id)
+        .then(slots => {
+            res.json(
+                {
+                    status: "success",
+                    data: slots
+                }
             );
         })
         .catch(err => console.error(err));
